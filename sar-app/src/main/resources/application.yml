@@ -1,0 +1,127 @@
+spring:
+  application:
+    name: sar-solution
+
+  # Database configuration - H2 for development, PostgreSQL for production
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:sardb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL}
+    username: ${DB_USER:sa}
+    password: ${DB_PASS:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL:validate}
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        envers:
+          audit_table_suffix: _aud
+          revision_field_name: rev
+          revision_type_field_name: revtype
+          store_data_at_delete: true
+        dialect: ${JPA_DIALECT:org.hibernate.dialect.H2Dialect}
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  # Spring Batch
+  batch:
+    job:
+      enabled: false  # Don't auto-run batch jobs on startup
+    jdbc:
+      initialize-schema: always
+
+# Server
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# SpringDoc OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  info:
+    title: FinCEN SAR Solution API
+    version: 1.0.0
+    description: |
+      SAR (Suspicious Activity Report) Filing System REST API.
+
+      Integrates with AML case management systems for auto-population.
+      Generates FinCEN BSA XML batch files per EFL_SARXBatchSchema.xsd.
+      Validates against FinCENReferenceCodes.xsd before submission.
+
+# SAR Application Configuration
+sar:
+  efiling:
+    # Transmitter information (required for BSA XML batch)
+    transmitter:
+      name: ${TRANSMITTER_NAME:SAR Solution System}
+      ein: ${TRANSMITTER_EIN:}
+      contact-name: ${TRANSMITTER_CONTACT_NAME:}
+      contact-phone: ${TRANSMITTER_CONTACT_PHONE:}
+      contact-email: ${TRANSMITTER_CONTACT_EMAIL:}
+
+    # FinCEN BSA E-Filing endpoint
+    fincen:
+      submission-url: ${FINCEN_SUBMISSION_URL:https://bsaefiling-sandbox.fincen.gov/api/v1/batch}
+      api-key: ${FINCEN_API_KEY:}
+      institution-id: ${FINCEN_INSTITUTION_ID:}
+
+    # Filing mode: sandbox | production | offline
+    mode: ${EFILING_MODE:offline}
+
+    # XML output directory
+    batch:
+      output-dir: ${BATCH_OUTPUT_DIR:/tmp/sar-efiling}
+      max-reports-per-batch: ${MAX_REPORTS_PER_BATCH:100}
+
+    # XSD validation
+    validation:
+      use-online-schema: ${VALIDATE_XSD:true}
+      schema-timeout-ms: 30000
+
+    # Scheduler
+    scheduler:
+      enabled: ${SCHEDULER_ENABLED:false}
+      cron: ${EFILING_CRON:0 0 2 * * ?}
+      poll-interval-ms: ${POLL_INTERVAL_MS:1800000}
+
+  # AML Case Management Integration
+  case-management:
+    type: ${CMS_TYPE:rest}
+    base-url: ${CMS_BASE_URL:http://localhost:8090}
+    system-name: ${CMS_SYSTEM_NAME:AML-CMS}
+    api-key: ${CMS_API_KEY:}
+    connect-timeout: 5000
+    read-timeout: 15000
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,batch
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    com.fincen.sar: ${LOG_LEVEL:INFO}
+    org.springframework.batch: INFO
+    org.hibernate.SQL: ${SQL_LOG:WARN}

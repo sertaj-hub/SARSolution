@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>sar-api</artifactId>
-    <name>SAR API - REST Controllers & OpenAPI</name>
+    <name>SAR API - REST Controllers &amp; OpenAPI</name>
 
     <dependencies>
         <dependency>

@@ -202,6 +202,68 @@ public class SarReportController {
         return ResponseEntity.noContent().build();
     }
 
+    // --- Activity Type Management ---
+
+    @PostMapping("/{id}/activity-types")
+    @PreAuthorize("hasAnyRole('ANALYST', 'COMPLIANCE_OFFICER', 'ADMIN')")
+    @Operation(summary = "Add suspicious activity type to SAR (Part II)")
+    public ResponseEntity<SarActivityTypeDto> addActivityType(
+            @PathVariable UUID id,
+            @RequestBody SarActivityTypeDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sarFormService.addActivityType(id, dto));
+    }
+
+    @PutMapping("/{id}/activity-types/{activityTypeId}")
+    @PreAuthorize("hasAnyRole('ANALYST', 'COMPLIANCE_OFFICER', 'ADMIN')")
+    @Operation(summary = "Update a suspicious activity type")
+    public ResponseEntity<SarActivityTypeDto> updateActivityType(
+            @PathVariable UUID id,
+            @PathVariable UUID activityTypeId,
+            @RequestBody SarActivityTypeDto dto) {
+        return ResponseEntity.ok(sarFormService.updateActivityType(id, activityTypeId, dto));
+    }
+
+    @DeleteMapping("/{id}/activity-types/{activityTypeId}")
+    @PreAuthorize("hasAnyRole('ANALYST', 'COMPLIANCE_OFFICER', 'ADMIN')")
+    @Operation(summary = "Remove a suspicious activity type from SAR")
+    public ResponseEntity<Void> removeActivityType(
+            @PathVariable UUID id,
+            @PathVariable UUID activityTypeId) {
+        sarFormService.removeActivityType(id, activityTypeId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --- Branch Management ---
+
+    @PostMapping("/{id}/branches")
+    @PreAuthorize("hasAnyRole('ANALYST', 'COMPLIANCE_OFFICER', 'ADMIN')")
+    @Operation(summary = "Add branch where activity occurred (Part III)")
+    public ResponseEntity<SarBranchDto> addBranch(
+            @PathVariable UUID id,
+            @RequestBody SarBranchDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sarFormService.addBranch(id, dto));
+    }
+
+    @PutMapping("/{id}/branches/{branchId}")
+    @PreAuthorize("hasAnyRole('ANALYST', 'COMPLIANCE_OFFICER', 'ADMIN')")
+    @Operation(summary = "Update a branch record")
+    public ResponseEntity<SarBranchDto> updateBranch(
+            @PathVariable UUID id,
+            @PathVariable UUID branchId,
+            @RequestBody SarBranchDto dto) {
+        return ResponseEntity.ok(sarFormService.updateBranch(id, branchId, dto));
+    }
+
+    @DeleteMapping("/{id}/branches/{branchId}")
+    @PreAuthorize("hasAnyRole('ANALYST', 'COMPLIANCE_OFFICER', 'ADMIN')")
+    @Operation(summary = "Remove a branch from SAR")
+    public ResponseEntity<Void> removeBranch(
+            @PathVariable UUID id,
+            @PathVariable UUID branchId) {
+        sarFormService.removeBranch(id, branchId);
+        return ResponseEntity.noContent().build();
+    }
+
     // --- Audit History ---
 
     @GetMapping("/{id}/audit-history")

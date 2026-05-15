@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>sar-core</artifactId>
-    <name>SAR Core - Domain & Infrastructure</name>
+    <name>SAR Core - Domain &amp; Infrastructure</name>
 
     <dependencies>
         <dependency>

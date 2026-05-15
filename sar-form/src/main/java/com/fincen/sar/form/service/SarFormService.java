@@ -35,6 +35,8 @@ public class SarFormService {
     private final SarSubjectRepository subjectRepository;
     private final SarAccountRepository accountRepository;
     private final SarTransactionRepository transactionRepository;
+    private final SarActivityTypeRepository activityTypeRepository;
+    private final SarBranchRepository branchRepository;
     private final SarFormMapper mapper;
     private final SarFormValidator validator;
     private final ReportNumberGenerator reportNumberGenerator;
@@ -260,6 +262,67 @@ public class SarFormService {
     public void removeTransaction(UUID sarId, UUID txnId) {
         SarReport report = getEditableReport(sarId);
         report.getTransactions().removeIf(t -> t.getId().equals(txnId));
+        sarReportRepository.save(report);
+    }
+
+    // --- Activity type management ---
+
+    public SarActivityTypeDto addActivityType(UUID sarId, SarActivityTypeDto dto) {
+        SarReport report = getEditableReport(sarId);
+        SarActivityType activityType = mapper.activityTypeFromDto(dto);
+        activityType.setSeqNum(report.getActivityTypes().size() + 1);
+        report.addActivityType(activityType);
+        sarReportRepository.save(report);
+        return mapper.activityTypeToDto(activityType);
+    }
+
+    public SarActivityTypeDto updateActivityType(UUID sarId, UUID activityTypeId, SarActivityTypeDto dto) {
+        getEditableReport(sarId);
+        SarActivityType activityType = activityTypeRepository.findById(activityTypeId)
+                .orElseThrow(() -> new SarNotFoundException(activityTypeId));
+        if (dto.getActivityTypeCode() != null) activityType.setActivityTypeCode(dto.getActivityTypeCode());
+        if (dto.getActivityTypeOther() != null) activityType.setActivityTypeOther(dto.getActivityTypeOther());
+        if (dto.getAmount() != null) activityType.setAmount(dto.getAmount());
+        if (dto.getProductType() != null) activityType.setProductType(dto.getProductType());
+        if (dto.getProductInstrumentDescription() != null) activityType.setProductInstrumentDescription(dto.getProductInstrumentDescription());
+        return mapper.activityTypeToDto(activityTypeRepository.save(activityType));
+    }
+
+    public void removeActivityType(UUID sarId, UUID activityTypeId) {
+        SarReport report = getEditableReport(sarId);
+        report.getActivityTypes().removeIf(at -> at.getId().equals(activityTypeId));
+        sarReportRepository.save(report);
+    }
+
+    // --- Branch management ---
+
+    public SarBranchDto addBranch(UUID sarId, SarBranchDto dto) {
+        SarReport report = getEditableReport(sarId);
+        SarBranch branch = mapper.branchFromDto(dto);
+        branch.setSeqNum(report.getBranches().size() + 1);
+        report.addBranch(branch);
+        sarReportRepository.save(report);
+        return mapper.branchToDto(branch);
+    }
+
+    public SarBranchDto updateBranch(UUID sarId, UUID branchId, SarBranchDto dto) {
+        getEditableReport(sarId);
+        SarBranch branch = branchRepository.findById(branchId)
+                .orElseThrow(() -> new SarNotFoundException(branchId));
+        if (dto.getBranchName() != null) branch.setBranchName(dto.getBranchName());
+        if (dto.getRssdNumber() != null) branch.setRssdNumber(dto.getRssdNumber());
+        if (dto.getAddress() != null) branch.setAddress(dto.getAddress());
+        if (dto.getCity() != null) branch.setCity(dto.getCity());
+        if (dto.getState() != null) branch.setState(dto.getState());
+        if (dto.getZipCode() != null) branch.setZipCode(dto.getZipCode());
+        if (dto.getCountry() != null) branch.setCountry(dto.getCountry());
+        if (dto.getIsPrimary() != null) branch.setIsPrimary(dto.getIsPrimary());
+        return mapper.branchToDto(branchRepository.save(branch));
+    }
+
+    public void removeBranch(UUID sarId, UUID branchId) {
+        SarReport report = getEditableReport(sarId);
+        report.getBranches().removeIf(b -> b.getId().equals(branchId));
         sarReportRepository.save(report);
     }
 

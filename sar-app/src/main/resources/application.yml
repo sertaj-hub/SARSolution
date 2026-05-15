@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: ${JPA_DDL:validate}
+      ddl-auto: ${JPA_DDL:create-drop}
     show-sql: ${SHOW_SQL:false}
     properties:
       hibernate:
@@ -26,10 +26,10 @@ spring:
           revision_field_name: rev
           revision_type_field_name: revtype
           store_data_at_delete: true
-        dialect: ${JPA_DIALECT:org.hibernate.dialect.H2Dialect}
+        dialect: ${JPA_DIALECT:com.fincen.sar.app.config.FixedH2Dialect}
 
   flyway:
-    enabled: true
+    enabled: ${FLYWAY_ENABLED:false}
     locations: classpath:db/migration
     baseline-on-migrate: true
 

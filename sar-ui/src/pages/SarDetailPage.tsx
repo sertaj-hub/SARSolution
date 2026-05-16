@@ -84,8 +84,13 @@ export function SarDetailPage() {
   const handleValidate = async () => {
     try {
       const result = await validateXml.mutateAsync();
-      if (result.valid) toast.success('XML is valid against FinCEN XSD schemas');
-      else toast.error(`XML validation failed: ${result.errors.join('; ')}`);
+      if (result.skipped) {
+        toast.info(`XML is well-formed. Full XSD validation skipped — FinCEN schema not reachable.`);
+      } else if (result.valid) {
+        toast.success('XML is valid against FinCEN XSD schemas');
+      } else {
+        toast.error(`XML validation failed: ${result.errors.join('; ')}`);
+      }
     } catch (err: unknown) { toast.error((err as { detail?: string })?.detail ?? 'Validation error'); }
   };
 

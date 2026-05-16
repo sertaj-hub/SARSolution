@@ -93,8 +93,7 @@ public class FinCenXmlGenerator {
     }
 
     private long countParties(SarReport report) {
-        long count = 3; // Transmitter + FilingInstitution + FIWhereActivityOccurred
-        if (!transmitterContactName.isBlank()) count++;
+        long count = 4; // Transmitter + TransmitterContact + FilingInstitution + FIWhereActivityOccurred
         if (report.getContactOfficeName() != null || report.getContactPhone() != null) count++;
         count += report.getBranches().size();
         count += report.getSubjects().size();
@@ -118,9 +117,7 @@ public class FinCenXmlGenerator {
 
         // Parties — minimum 6 required by schema
         buildTransmitterParty(doc, activity, seq);
-        if (!transmitterContactName.isBlank()) {
-            buildTransmitterContactParty(doc, activity, seq);
-        }
+        buildTransmitterContactParty(doc, activity, seq); // always required (one of the 6 mandatory roles)
         buildFilingInstitutionParty(doc, activity, report, seq);
         if (report.getContactOfficeName() != null || report.getContactPhone() != null) {
             buildContactOfficeParty(doc, activity, report, seq);
@@ -176,8 +173,8 @@ public class FinCenXmlGenerator {
         if (!transmitterEin.isBlank()) {
             Element partyId = createElement(doc, party, "PartyIdentification");
             partyId.setAttribute("SeqNum", String.valueOf(seq.getAndIncrement()));
-            createElement(doc, partyId, "PartyIdentificationTypeCode", "2"); // EIN
             createElement(doc, partyId, "PartyIdentificationNumberText", transmitterEin);
+            createElement(doc, partyId, "PartyIdentificationTypeCode", "2"); // EIN
         }
     }
 
@@ -187,10 +184,11 @@ public class FinCenXmlGenerator {
         createElement(doc, party, "ActivityPartyTypeCode",
                 String.valueOf(PartyTypeCode.TRANSMITTER_CONTACT.getCode()));
 
+        String contactName = transmitterContactName.isBlank() ? transmitterName : transmitterContactName;
         Element partyName = createElement(doc, party, "PartyName");
         partyName.setAttribute("SeqNum", String.valueOf(seq.getAndIncrement()));
         createElement(doc, partyName, "PartyNameTypeCode", "L");
-        createElement(doc, partyName, "RawPartyFullName", transmitterContactName);
+        createElement(doc, partyName, "RawPartyFullName", contactName);
 
         if (!transmitterContactPhone.isBlank()) {
             Element phone = createElement(doc, party, "PhoneNumber");
@@ -220,8 +218,8 @@ public class FinCenXmlGenerator {
         if (report.getFilingInstitutionEin() != null) {
             Element partyId = createElement(doc, party, "PartyIdentification");
             partyId.setAttribute("SeqNum", String.valueOf(seq.getAndIncrement()));
-            createElement(doc, partyId, "PartyIdentificationTypeCode", "2"); // EIN
             createElement(doc, partyId, "PartyIdentificationNumberText", report.getFilingInstitutionEin());
+            createElement(doc, partyId, "PartyIdentificationTypeCode", "2"); // EIN
         }
     }
 
@@ -263,8 +261,8 @@ public class FinCenXmlGenerator {
         if (report.getFilingInstitutionEin() != null) {
             Element partyId = createElement(doc, party, "PartyIdentification");
             partyId.setAttribute("SeqNum", String.valueOf(seq.getAndIncrement()));
-            createElement(doc, partyId, "PartyIdentificationTypeCode", "2");
             createElement(doc, partyId, "PartyIdentificationNumberText", report.getFilingInstitutionEin());
+            createElement(doc, partyId, "PartyIdentificationTypeCode", "2");
         }
     }
 
@@ -351,15 +349,16 @@ public class FinCenXmlGenerator {
         if (subject.getIdType() != null && subject.getIdNumber() != null) {
             Element partyId = createElement(doc, party, "PartyIdentification");
             partyId.setAttribute("SeqNum", String.valueOf(seq.getAndIncrement()));
-            createElement(doc, partyId, "PartyIdentificationTypeCode",
-                    String.valueOf(subject.getIdType().getCode()));
-            if (subject.getIdIssueState() != null) {
-                createElement(doc, partyId, "OtherIssuerStateText", subject.getIdIssueState());
-            }
+            // Element order per PartyIdentificationType restriction: country, state, numberText, typeCode
             if (subject.getIdIssueCountry() != null) {
                 createElement(doc, partyId, "OtherIssuerCountryText", subject.getIdIssueCountry());
             }
+            if (subject.getIdIssueState() != null) {
+                createElement(doc, partyId, "OtherIssuerStateText", subject.getIdIssueState());
+            }
             createElement(doc, partyId, "PartyIdentificationNumberText", subject.getIdNumber());
+            createElement(doc, partyId, "PartyIdentificationTypeCode",
+                    String.valueOf(subject.getIdType().getCode()));
         }
 
         // Email

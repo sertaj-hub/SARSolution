@@ -17,7 +17,7 @@ const MAX_NARRATIVE = 20000;
 export function Part5NarrativeTab({ sar }: { sar: SarReportDto }) {
   const updateSar = useUpdateSar(sar.id);
 
-  const { register, handleSubmit, watch, formState: { isDirty } } = useForm<NarrativeFields>({
+  const { register, handleSubmit, watch, formState: { errors, isDirty } } = useForm<NarrativeFields>({
     defaultValues: {
       narrative: sar.narrative ?? '',
       filingDate: sar.filingDate ?? '',
@@ -58,7 +58,12 @@ export function Part5NarrativeTab({ sar }: { sar: SarReportDto }) {
         </div>
         <Textarea
           rows={20}
-          {...register('narrative')}
+          {...register('narrative', {
+            required: 'Narrative is required',
+            minLength: { value: 17, message: 'Narrative must be at least 17 characters' },
+            maxLength: { value: MAX_NARRATIVE, message: `Narrative exceeds ${MAX_NARRATIVE.toLocaleString()} character limit` },
+          })}
+          error={errors.narrative?.message}
           placeholder="Describe the suspicious activity in detail. Include:
 • Who is involved (subjects, accounts, institutions)
 • What type of suspicious activity occurred

@@ -32,7 +32,7 @@ export function Part2ActivityTab({ sar }: { sar: SarReportDto }) {
   const updateActivityType = useUpdateActivityType(sar.id);
   const deleteActivityType = useDeleteActivityType(sar.id);
 
-  const { register, handleSubmit, formState: { isDirty } } = useForm<ActivityFields>({
+  const { register, handleSubmit, watch, formState: { errors, isDirty } } = useForm<ActivityFields>({
     defaultValues: {
       activityFromDate: sar.activityFromDate ?? '',
       activityToDate: sar.activityToDate ?? '',
@@ -42,6 +42,9 @@ export function Part2ActivityTab({ sar }: { sar: SarReportDto }) {
       fiNotedSuspiciousActivity: sar.fiNotedSuspiciousActivity ?? true,
     },
   });
+
+  const noAmountInvolved = watch('noAmountInvolved');
+  const activityFromDate = watch('activityFromDate');
 
   const [rows, setRows] = useState<ActivityTypeRow[]>(() =>
     ACTIVITY_TYPE_GROUPS.flatMap(g => g.types).map(t => {
@@ -133,14 +136,31 @@ export function Part2ActivityTab({ sar }: { sar: SarReportDto }) {
         <h3 className="text-sm font-semibold text-slate-900">Part II – Suspicious Activity Information</h3>
 
         <div className="grid grid-cols-2 gap-3">
-          <Input label="Activity From Date" type="date" {...register('activityFromDate')} />
-          <Input label="Activity To Date" type="date" {...register('activityToDate')} />
+          <Input
+            label="Activity From Date *"
+            type="date"
+            {...register('activityFromDate', { required: 'Activity from date is required' })}
+            error={errors.activityFromDate?.message}
+          />
+          <Input
+            label="Activity To Date *"
+            type="date"
+            {...register('activityToDate', {
+              required: 'Activity to date is required',
+              validate: v => !activityFromDate || !v || v >= activityFromDate || 'To date must not be before from date',
+            })}
+            error={errors.activityToDate?.message}
+          />
           <Input
             label="Total Suspicious Amount ($)"
             type="number"
             step="0.01"
             min="0"
-            {...register('totalSuspiciousAmount', { valueAsNumber: true })}
+            {...register('totalSuspiciousAmount', {
+              valueAsNumber: true,
+              validate: v => noAmountInvolved || (v != null && !isNaN(v) && v > 0) || 'Enter an amount or check "No amount involved"',
+            })}
+            error={errors.totalSuspiciousAmount?.message}
             placeholder="0.00"
           />
           <div className="flex flex-col justify-end gap-2 pb-1">

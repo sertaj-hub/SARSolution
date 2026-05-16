@@ -23,6 +23,7 @@ interface SubjectFormProps {
 function SubjectForm({ defaultValues, onSave, onCancel, saving }: SubjectFormProps) {
   const { register, watch, handleSubmit, formState: { errors } } = useForm<SarSubjectDto>({ defaultValues });
   const isEntity = watch('isEntity');
+  const isUnknown = watch('isUnknown');
   const roleCode = watch('roleCode');
 
   return (
@@ -44,7 +45,13 @@ function SubjectForm({ defaultValues, onSave, onCancel, saving }: SubjectFormPro
         {String(isEntity) !== 'true' ? (
           <>
             <SectionTitle>Individual Name</SectionTitle>
-            <Input label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
+            <Input
+              label="Last Name *"
+              {...register('lastName', {
+                validate: v => isUnknown || (!!v && v.trim().length > 0) || 'Last name is required for individuals',
+              })}
+              error={errors.lastName?.message}
+            />
             <Input label="First Name" {...register('firstName')} />
             <Input label="Middle Name" {...register('middleName')} />
             <Input label="Suffix" {...register('suffix')} placeholder="Jr., Sr., III…" />
@@ -54,7 +61,11 @@ function SubjectForm({ defaultValues, onSave, onCancel, saving }: SubjectFormPro
           <>
             <SectionTitle>Entity / Business Name</SectionTitle>
             <div className="col-span-full">
-              <Input label="Entity / Business Name" {...register('entityName')} />
+              <Input
+                label="Entity / Business Name *"
+                {...register('entityName', { required: 'Entity name is required' })}
+                error={errors.entityName?.message}
+              />
             </div>
             <Input label="Doing Business As (DBA)" {...register('doingBusinessAs')} />
           </>

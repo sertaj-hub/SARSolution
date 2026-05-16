@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useSarReport } from '@/hooks/useSarReport';
+import { toast } from 'sonner';
+import { useSarReport, useSubmitForReview } from '@/hooks/useSarReport';
 import { SarStatusBadge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { ValidationPanel } from '@/components/ui/ValidationPanel';
 import { Part1SubjectTab } from './form-tabs/Part1SubjectTab';
 import { Part2ActivityTab } from './form-tabs/Part2ActivityTab';
 import { Part3BranchAccountTab } from './form-tabs/Part3BranchAccountTab';
@@ -22,7 +25,26 @@ export function SarFormPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: sar, isPending, isError } = useSarReport(id);
+  const submitForReview = useSubmitForReview(id ?? '');
   const [tab, setTab] = useState<TabId>('part1');
+  const [violations, setViolations] = useState<string[]>([]);
+
+  const handleSubmitForReview = async () => {
+    setViolations([]);
+    try {
+      await submitForReview.mutateAsync();
+      toast.success('SAR submitted for review');
+      navigate(`/sar/${id}`);
+    } catch (err: unknown) {
+      const e = err as { detail?: string; violations?: string[] };
+      if (e.violations && e.violations.length > 0) {
+        setViolations(e.violations);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        toast.error(e.detail ?? 'Failed to submit for review');
+      }
+    }
+  };
 
   if (isPending) return <div className="card p-12 text-center text-sm text-slate-500">Loading…</div>;
   if (isError || !sar) return <div className="card p-12 text-center text-sm text-red-600">SAR report not found</div>;
@@ -34,18 +56,27 @@ export function SarFormPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => navigate(`/sar/${sar.id}`)}
-          className="text-xs text-slate-500 hover:text-brand-700"
-        >
-          ← Back to detail
-        </button>
-        <span className="text-slate-300">|</span>
-        <SarStatusBadge status={sar.status} />
-        <span className="font-mono text-xs text-slate-500">{sar.reportNumber}</span>
-        <span className="text-sm font-medium text-slate-700">{sar.filingInstitutionName}</span>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(`/sar/${sar.id}`)}
+            className="text-xs text-slate-500 hover:text-brand-700"
+          >
+            ← Back to detail
+          </button>
+          <span className="text-slate-300">|</span>
+          <SarStatusBadge status={sar.status} />
+          <span className="font-mono text-xs text-slate-500">{sar.reportNumber}</span>
+          <span className="text-sm font-medium text-slate-700">{sar.filingInstitutionName}</span>
+        </div>
+        {sar.status === 'DRAFT' && (
+          <Button size="sm" onClick={() => { void handleSubmitForReview(); }} disabled={submitForReview.isPending}>
+            {submitForReview.isPending ? 'Submitting…' : 'Submit for Review'}
+          </Button>
+        )}
       </div>
+
+      <ValidationPanel violations={violations} onDismiss={() => setViolations([])} />
 
       <div className="card overflow-hidden">
         {/* Tab Bar */}

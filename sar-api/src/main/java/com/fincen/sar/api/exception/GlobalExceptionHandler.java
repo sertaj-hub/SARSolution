@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -81,6 +82,17 @@ public class GlobalExceptionHandler {
         problem.setType(URI.create("sar:access-denied"));
         problem.setProperty("timestamp", LocalDateTime.now().toString());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(problem);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+        String message = ex.getMostSpecificCause().getMessage();
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+                message != null && message.length() < 200 ? message : "Invalid request body — check field values and types");
+        problem.setTitle("Invalid Request Body");
+        problem.setType(URI.create("sar:invalid-request"));
+        problem.setProperty("timestamp", LocalDateTime.now().toString());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
     }
 
     @ExceptionHandler(Exception.class)

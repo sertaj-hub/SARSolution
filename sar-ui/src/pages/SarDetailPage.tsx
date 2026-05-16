@@ -6,6 +6,7 @@ import { SarStatusBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Textarea } from '@/components/ui/Textarea';
+import { ValidationPanel } from '@/components/ui/ValidationPanel';
 import { Part1SubjectTab } from './form-tabs/Part1SubjectTab';
 import { Part2ActivityTab } from './form-tabs/Part2ActivityTab';
 import { Part3BranchAccountTab } from './form-tabs/Part3BranchAccountTab';
@@ -40,6 +41,7 @@ export function SarDetailPage() {
   const [rejectReason, setRejectReason] = useState('');
   const [xmlResult, setXmlResult] = useState<string | null>(null);
   const [xmlOpen, setXmlOpen] = useState(false);
+  const [violations, setViolations] = useState<string[]>([]);
 
   if (isPending) return <div className="card p-12 text-center text-sm text-slate-500">Loading…</div>;
   if (isError || !sar) return <div className="card p-12 text-center text-sm text-red-600">SAR report not found</div>;
@@ -50,8 +52,18 @@ export function SarDetailPage() {
   const canPreviewXml = sar.status === 'APPROVED' || sar.status === 'SUBMITTED' || sar.status === 'ACKNOWLEDGED';
 
   const handleSubmit = async () => {
-    try { await submit.mutateAsync(); toast.success('Submitted for review'); }
-    catch (err: unknown) { toast.error((err as { detail?: string })?.detail ?? 'Failed'); }
+    setViolations([]);
+    try {
+      await submit.mutateAsync();
+      toast.success('SAR submitted for review');
+    } catch (err: unknown) {
+      const e = err as { detail?: string; violations?: string[] };
+      if (e.violations && e.violations.length > 0) {
+        setViolations(e.violations);
+      } else {
+        toast.error(e.detail ?? 'Failed to submit for review');
+      }
+    }
   };
 
   const handleApprove = async () => {
@@ -116,6 +128,8 @@ export function SarDetailPage() {
           </div>
         </div>
       </div>
+
+      <ValidationPanel violations={violations} onDismiss={() => setViolations([])} />
 
       {/* 5-part form tabs */}
       <div className="card overflow-hidden">

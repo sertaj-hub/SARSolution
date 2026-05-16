@@ -3,7 +3,29 @@
     "allow": [
       "Read(//Users/sertajkhan/.ssh/**)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(curl -s -X POST http://localhost:8080/api/sar-reports -H 'Content-Type: application/json' -H 'Authorization: Basic __CMDSUB_OUTPUT__')",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/sar-reports -H 'Content-Type: application/json' -H 'Authorization: Basic __CMDSUB_OUTPUT__')",
+      "Bash(curl -s -X POST http://localhost:5176/api/v1/sar-reports -H 'Content-Type: application/json' -H 'Authorization: Basic __CMDSUB_OUTPUT__')",
+      "Bash(npx tsc *)",
+      "Bash(mvn package *)",
+      "Bash(java -version)",
+      "Bash(mvn -version)",
+      "Bash(/usr/libexec/java_home -v 21)",
+      "Bash(export JAVA_HOME=$\\(/usr/libexec/java_home -v 21\\))",
+      "Bash(JAVA_HOME=__TRACKED_VAR__ mvn package -pl sar-app -am -q -DskipTests)",
+      "Bash(/usr/libexec/java_home *)",
+      "Bash(JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home mvn package -pl sar-app -am -q -DskipTests)",
+      "Bash(pkill -f \"sar-app.*SNAPSHOT.jar\")",
+      "Bash(JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home /Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/bin/java -jar /Users/sertajkhan/ClaudeCodeProjSk/SARSolution/sar-app/target/sar-app-1.0.0-SNAPSHOT.jar)",
+      "Bash(echo \"Started PID $!\")",
+      "Bash(curl -s http://localhost:8080/actuator/health)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Backend status:', d.get\\('status'\\)\\)\")"
     ]
   }
 }

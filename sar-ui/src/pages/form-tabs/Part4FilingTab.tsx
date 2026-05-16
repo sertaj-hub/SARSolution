@@ -32,7 +32,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export function Part4FilingTab({ sar }: { sar: SarReportDto }) {
   const updateSar = useUpdateSar(sar.id);
 
-  const { register, handleSubmit, watch, formState: { isDirty } } = useForm<FilingFields>({
+  const { register, handleSubmit, watch, formState: { errors, isDirty } } = useForm<FilingFields>({
     defaultValues: {
       filingInstitutionName: sar.filingInstitutionName ?? '',
       filingInstitutionEin: sar.filingInstitutionEin ?? '',
@@ -66,13 +66,15 @@ export function Part4FilingTab({ sar }: { sar: SarReportDto }) {
         <div className="col-span-full">
           <Input
             label="Financial Institution Name *"
-            {...register('filingInstitutionName')}
+            {...register('filingInstitutionName', { required: 'Institution name is required' })}
+            error={errors.filingInstitutionName?.message}
             placeholder="Name of the institution filing this SAR"
           />
         </div>
         <Input
-          label="EIN / Tax ID"
-          {...register('filingInstitutionEin')}
+          label="EIN / Tax ID *"
+          {...register('filingInstitutionEin', { required: 'EIN is required for eFiling' })}
+          error={errors.filingInstitutionEin?.message}
           placeholder="XX-XXXXXXX"
         />
         <Select label="Institution Type" {...register('filingInstitutionType')}>
@@ -87,8 +89,9 @@ export function Part4FilingTab({ sar }: { sar: SarReportDto }) {
           placeholder="BSA Compliance, AML Department…"
         />
         <Input
-          label="Contact Phone"
-          {...register('contactPhone')}
+          label="Contact Phone *"
+          {...register('contactPhone', { required: 'Contact phone is required for eFiling' })}
+          error={errors.contactPhone?.message}
           placeholder="+1 555-000-0000"
         />
         <div className="col-span-full">

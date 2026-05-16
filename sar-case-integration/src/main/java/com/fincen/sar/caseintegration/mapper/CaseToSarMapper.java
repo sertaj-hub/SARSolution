@@ -78,7 +78,7 @@ public interface CaseToSarMapper {
         try {
             return ActivityTypeCode.valueOf(type.toUpperCase().replace("-", "_").replace(" ", "_"));
         } catch (IllegalArgumentException e) {
-            return ActivityTypeCode.FRAUD_OTHER;
+            return ActivityTypeCode.BRIBERY_GRATUITY;
         }
     }
 

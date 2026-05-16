@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Minimal IC-ISM stub for FinCEN BSA XML validation.
+     Only the three items referenced by BSA_XML_2.0.xsd are declared. -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:ism="urn:us:gov:ic:ism"
+            targetNamespace="urn:us:gov:ic:ism"
+            elementFormDefault="qualified"
+            attributeFormDefault="qualified">
+
+    <!-- Referenced as optional element (commented out in BSA but schema still imports) -->
+    <xsd:element name="Notice" type="xsd:string"/>
+
+    <!-- Attribute groups referenced by BSABatch element -->
+    <xsd:attributeGroup name="ISMRootNodeAttributeOptionGroup"/>
+    <xsd:attributeGroup name="ResourceNodeAttributeOptionGroup"/>
+
+</xsd:schema>

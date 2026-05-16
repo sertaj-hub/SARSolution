@@ -1,19 +1,16 @@
 package com.fincen.sar.core.enums;
 
 /**
- * FinCEN BSA XML 2.0 ActivityPartyTypeCode values.
- * Each SAR activity requires specific party types in the batch XML.
+ * FinCEN EFL_SARXBatchSchema.xsd ValidateActivityPartyCodeType values.
  */
 public enum PartyTypeCode {
-    TRANSMITTER(8, "Transmitter"),
-    TRANSMITTER_CONTACT(9, "Transmitter Contact"),
-    FILING_INSTITUTION(35, "Filing Institution"),
-    DESIGNATED_CONTACT_OFFICE(46, "Designated Contact Office"),
-    LAW_ENFORCEMENT_AGENCY(41, "Law Enforcement Agency"),
-    LAW_ENFORCEMENT_CONTACT(42, "Law Enforcement Contact"),
-    FI_WHERE_ACTIVITY_OCCURRED(33, "Financial Institution Where Activity Occurred"),
-    BRANCH_WHERE_ACTIVITY_OCCURRED(34, "Branch Where Activity Occurred"),
-    SUBJECT(23, "Subject");
+    TRANSMITTER(35, "Transmitter"),
+    TRANSMITTER_CONTACT(37, "Transmitter Contact"),
+    FILING_INSTITUTION(30, "Reporting Financial Institution"),
+    CONTACT_FOR_ASSISTANCE(8, "Contact for Assistance"),
+    FI_WHERE_ACTIVITY_OCCURRED(34, "Transaction Location Business"),
+    BRANCH_WHERE_ACTIVITY_OCCURRED(46, "Transaction Location Branch"),
+    SUBJECT(33, "Subject");
 
     private final int code;
     private final String description;

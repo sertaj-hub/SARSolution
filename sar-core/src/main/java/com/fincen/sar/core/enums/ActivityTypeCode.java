@@ -1,93 +1,115 @@
 package com.fincen.sar.core.enums;
 
 /**
- * FinCEN SAR Suspicious Activity subtype codes per BSA XML 2.0 schema.
- * References: FinCENReferenceCodes.xsd SuspiciousActivitySubtypeID values.
+ * FinCEN SAR suspicious activity types.
+ * subtypeId = ValidateSuspiciousActivitySubtypeID in EFL_SARXBatchSchema.xsd
+ * typeId    = ValidateSuspiciousActivityTypeID  in EFL_SARXBatchSchema.xsd
  */
 public enum ActivityTypeCode {
 
-    // Fraud
-    BRIBERY_GRATUITY(1, "Bribery/gratuity"),
-    CHECK_FRAUD(2, "Check fraud"),
-    CHECK_KITING(3, "Check kiting"),
-    COMMERCIAL_LOAN_FRAUD(4, "Commercial loan fraud"),
-    CONSUMER_LOAN_FRAUD(5, "Consumer loan fraud"),
-    COUNTERFEIT_CHECK(6, "Counterfeit check"),
-    COUNTERFEIT_CREDIT_DEBIT_CARD(7, "Counterfeit credit/debit card"),
-    COUNTERFEIT_INSTRUMENT_OTHER(8, "Counterfeit instrument (other)"),
-    CREDIT_CARD_FRAUD(9, "Credit card fraud"),
-    DEBIT_CARD_FRAUD(10, "Debit card fraud"),
-    DEFALCATION_EMBEZZLEMENT(11, "Defalcation/embezzlement"),
-    FALSE_STATEMENT(12, "False statement"),
-    MISUSE_OF_POSITION(13, "Misuse of position or self-dealing"),
-    MORTGAGE_LOAN_FRAUD(14, "Mortgage loan fraud"),
-    MYSTERIOUS_DISAPPEARANCE(15, "Mysterious disappearance"),
-    WIRE_TRANSFER_FRAUD(16, "Wire transfer fraud"),
-    FRAUD_OTHER(17, "Other (Fraud)"),
+    // --- Structuring (typeId=1) ---
+    STRUCTURING(114, 1, "Structuring / Transaction below CTR threshold"),
+    TRANSACTIONS_BELOW_BSA_THRESHOLD(113, 1, "Transaction(s) below BSA recordkeeping threshold"),
+    ALTERS_CANCELS_FOR_CTR(112, 1, "Alters or cancels transaction to avoid CTR requirement"),
+    ALTERS_CANCELS_FOR_BSA(111, 1, "Alters or cancels transaction to avoid BSA recordkeeping requirement"),
+    SUSPICIOUS_BSA_INQUIRY(106, 1, "Suspicious inquiry regarding BSA/recordkeeping requirements"),
 
-    // Money Laundering
-    IDENTIFICATION_DOCUMENTATION(18, "Identification documentation"),
-    MONEY_LAUNDERING(19, "Money laundering"),
-    MONEY_LAUNDERING_OTHER(20, "Other (Money laundering)"),
+    // --- Fraud (typeId=3) ---
+    CHECK_FRAUD(301, 3, "Check fraud"),
+    CONSUMER_LOAN_FRAUD(304, 3, "Consumer loan fraud"),
+    CREDIT_DEBIT_CARD_FRAUD(305, 3, "Credit/debit card fraud"),
+    WIRE_TRANSFER_FRAUD(312, 3, "Wire transfer fraud"),
+    BUSINESS_LOAN_FRAUD(321, 3, "Business loan fraud"),
+    ADVANCE_FEE_FRAUD(322, 3, "Advance fee fraud"),
+    HEALTHCARE_FRAUD(323, 3, "Healthcare/insurance fraud"),
+    PONZI_SCHEME(324, 3, "Ponzi/pyramid scheme"),
+    SECURITIES_FRAUD(325, 3, "Securities fraud"),
+    MAIL_FRAUD(308, 3, "Mail fraud"),
+    MASS_MARKETING_FRAUD(309, 3, "Mass-marketing fraud"),
+    PYRAMID_SCHEME(310, 3, "Pyramid scheme"),
+    ACH_FRAUD(320, 3, "ACH fraud"),
 
-    // Terrorist Financing
-    TERRORIST_FINANCING(21, "Terrorist financing"),
-    TERRORIST_FINANCING_OTHER(22, "Other (Terrorist financing)"),
+    // --- Identification Documentation (typeId=4) ---
+    CHANGES_SPELLING_OF_NAME(401, 4, "Changes spelling or arrangement of name"),
+    MULTIPLE_INDIVIDUALS_SAME_IDENTITY(402, 4, "Multiple individuals with same or similar identities"),
+    QUESTIONABLE_FALSE_DOCUMENTATION(403, 4, "Provided questionable or false documentation"),
+    REFUSED_AVOIDED_DOCUMENTATION(404, 4, "Refused or avoided request for documentation"),
+    SINGLE_INDIVIDUAL_MULTIPLE_IDENTITIES(405, 4, "Single individual with multiple identities"),
+    QUESTIONABLE_FALSE_IDENTIFICATION(409, 4, "Provided questionable or false identification"),
 
-    // Structuring
-    GAMING_ACTIVITIES(23, "Gaming activities"),
-    STRUCTURING(24, "Structuring"),
-    TRANSACTIONS_BELOW_THRESHOLD(25, "Transaction(s) below BSA threshold"),
-    TWO_OR_MORE_INDIVIDUALS(26, "Two or more individuals working together"),
-    UNUSUAL_MULTIPLE_TRANSACTION_TYPES(27, "Unusual use of multiple transaction types"),
-    STRUCTURING_ML_OTHER(28, "Other (Structuring/Money laundering)"),
+    // --- Insurance (typeId=5) ---
+    EXCESSIVE_INSURANCE(501, 5, "Excessive insurance"),
+    EXCESSIVE_CASH_BORROWING_POLICY(502, 5, "Excessive or unusual cash borrowing against policy/annuity"),
+    PROCEEDS_SENT_UNRELATED_THIRD_PARTY(504, 5, "Proceeds sent to unrelated third party"),
+    SUSPICIOUS_LIFE_SETTLEMENT(505, 5, "Suspicious life settlement sales insurance"),
+    SUSPICIOUS_TERMINATION_POLICY(506, 5, "Suspicious termination of policy or contract"),
+    UNCLEAR_NO_INSURABLE_INTEREST(507, 5, "Unclear or no insurable interest"),
 
-    // Cyber Events / Identity
-    ACCOUNT_TAKEOVER(29, "Account takeover"),
-    COMPUTER_INTRUSION(30, "Computer intrusion"),
-    CREDIT_DEBIT_CARD_THEFT(31, "Credit card/debit card theft"),
-    DEBIT_CARD_FRAUD_OTHER(32, "Debit card fraud (other)"),
-    ELDER_FINANCIAL_EXPLOITATION(33, "Elder financial exploitation"),
-    EMAIL_COMPROMISE(34, "E-mail compromise/E-mail related fraud"),
-    EXTORTION_BLACKMAIL(35, "Extortion/blackmail"),
-    FALSE_POLICE_REPORT(36, "False police report"),
-    HOME_EQUITY_FRAUD(37, "Home equity loan/line fraud"),
-    HUMAN_TRAFFICKING(38, "Human trafficking"),
-    IDENTITY_THEFT(39, "Identity theft"),
-    ILLICIT_MARKETPLACE(40, "Illicit marketplace"),
-    INSURANCE_FRAUD(41, "Insurance fraud"),
-    INVESTMENT_FRAUD(42, "Investment fraud"),
-    LOTTERY_SWEEPSTAKES_SCAM(43, "Lottery/sweepstakes scams"),
-    MALWARE_RANSOMWARE(44, "Malware/ransomware"),
-    MASS_MARKETING_FRAUD(45, "Mass marketing fraud"),
-    PONZI_PYRAMID_SCHEME(46, "Ponzi scheme/pyramid scheme"),
-    ROMANCE_FRAUD(47, "Romance fraud"),
-    SECURITIES_FRAUD(48, "Securities fraud"),
-    SOCIAL_ENGINEERING(49, "Social engineering"),
-    TAX_REFUND_FRAUD(50, "Tax refund fraud"),
-    TELEMARKETING_PHONE_FRAUD(51, "Telemarketing/phone fraud"),
-    TRADE_BASED_ML(52, "Trade-based money laundering/Black market peso exchange");
+    // --- Securities/Futures/Options (typeId=6) ---
+    INSIDER_TRADING(601, 6, "Insider trading"),
+    MISAPPROPRIATION(603, 6, "Misappropriation"),
+    UNAUTHORIZED_POOLING(604, 6, "Unauthorized pooling"),
+    MARKET_MANIPULATION(608, 6, "Market manipulation"),
+    WASH_TRADING(609, 6, "Wash trading"),
 
-    private final int code;
+    // --- Terrorist Financing (typeId=7) ---
+    TERRORIST_FINANCING(701, 7, "Known or suspected terrorist/terrorist organization"),
+
+    // --- Money Laundering (typeId=8) ---
+    EXCHANGES_BILLS(801, 8, "Exchanges small bills for large bills or vice versa"),
+    SUSPICIOUS_BENEFICIARY_DESIGNATION(804, 8, "Suspicious designation of beneficiaries/assignees/joint owners"),
+    SUSPICIOUS_EFT_WIRE(805, 8, "Suspicious EFT/wire transfers"),
+    SUSPICIOUS_GOVERNMENT_PAYMENTS(806, 8, "Suspicious receipt of government payments/benefits"),
+    SUSPICIOUS_MULTIPLE_ACCOUNTS(807, 8, "Suspicious use of multiple accounts"),
+    SUSPICIOUS_NONCASH_INSTRUMENTS(808, 8, "Suspicious use of noncash monetary instruments"),
+    SUSPICIOUS_THIRD_PARTY_TRANSACTORS(809, 8, "Suspicious use of third-party transactors (straw-man)"),
+    OUT_OF_PATTERN_TRANSACTION(812, 8, "Transaction out of pattern for customer(s)"),
+    SUSPICIOUS_PHYSICAL_CONDITION_FUNDS(820, 8, "Suspicious concerning physical condition of funds"),
+    SUSPICIOUS_SOURCE_OF_FUNDS(821, 8, "Suspicious concerning source of funds"),
+    SUSPICIOUS_EXCHANGE_CURRENCIES(822, 8, "Suspicious exchange of currencies"),
+    TRADE_BASED_ML(823, 8, "Trade-based money laundering/Black market peso exchange"),
+    FUNNEL_ACCOUNT(824, 8, "Funnel account"),
+
+    // --- Other Suspicious Activities (typeId=9) ---
+    BRIBERY_GRATUITY(901, 9, "Bribery or gratuity"),
+    EMBEZZLEMENT_THEFT(903, 9, "Embezzlement/theft/disappearance of funds"),
+    FORGERIES(904, 9, "Forgeries"),
+    IDENTITY_THEFT(905, 9, "Identity theft"),
+    CORRUPTION_DOMESTIC(907, 9, "Suspected public/private corruption (domestic)"),
+    CORRUPTION_FOREIGN(908, 9, "Suspected public/private corruption (foreign)"),
+    INFORMAL_VALUE_TRANSFER(909, 9, "Suspicious use of informal value transfer system"),
+    MULTIPLE_LOCATIONS(910, 9, "Suspicious use of multiple locations"),
+    TWO_OR_MORE_INDIVIDUALS(911, 9, "Two or more individuals working together"),
+    UNLICENSED_MSB(913, 9, "Unlicensed or unregistered MSB"),
+    COUNTERFEIT_INSTRUMENT(917, 9, "Counterfeit instrument (other)"),
+    ACCOUNT_TAKEOVER(920, 9, "Account takeover"),
+    ELDER_FINANCIAL_EXPLOITATION(921, 9, "Elder financial exploitation");
+
+    private final int subtypeId;
+    private final int typeId;
     private final String description;
 
-    ActivityTypeCode(int code, String description) {
-        this.code = code;
+    ActivityTypeCode(int subtypeId, int typeId, String description) {
+        this.subtypeId = subtypeId;
+        this.typeId = typeId;
         this.description = description;
     }
 
+    /** @deprecated Use getSubtypeId() */
+    @Deprecated
     public int getCode() {
-        return code;
+        return subtypeId;
+    }
+
+    public int getSubtypeId() {
+        return subtypeId;
+    }
+
+    public int getTypeId() {
+        return typeId;
     }
 
     public String getDescription() {
         return description;
-    }
-
-    public static ActivityTypeCode fromCode(int code) {
-        for (ActivityTypeCode type : values()) {
-            if (type.code == code) return type;
-        }
-        throw new IllegalArgumentException("Unknown ActivityTypeCode: " + code);
     }
 }

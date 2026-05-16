@@ -1,4 +1,4 @@
-# PostgreSQL profile - activate with: spring.profiles.active=postgres
+# PostgreSQL profile - activate with: --spring.profiles.active=postgres
 spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:sardb}
@@ -11,9 +11,16 @@ spring:
       connection-timeout: 30000
 
   jpa:
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
 
   h2:
     console:
